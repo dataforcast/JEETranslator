@@ -1,0 +1,198 @@
+# 1. Présentation
+<hr>
+
+Cette application présente l'implémentation d'un traducteur de sous-titres.
+
+Sub-titles are stored into a SQLITE database.
+
+JEE application retrieve subtitles from database, translate subtitle and store translated subtitle into databse.
+
+
+<center><img src="./TraduireLeFichier.png" alt="Drawing" style="width: 200px;"/></center>
+
+
+<br>
+## 1.1 Environnement de développement
+
+*   Station de travail : Linux / Ubuntu 16.04<br>
+
+*   Eclipse : Neon.3
+*   Mysql : 5.7.21
+*   SQLITE : 3
+*   JAVA runtime : openjdk version "1.8.0_151"
+*   J2EE 1.8
+*   Tomcat : 8.0.5
+
+# 2. Configuration de l'environnement sous Eclipse
+<hr>
+<pre>
+    Nom du projet : translator
+</pre>
+
+## 2.1 Importer le projet
+
+<pre><code>
+    1. → Lancer Eclipse
+    2. → Selection du workspace : Browse
+    3. → Créer un dossier
+    4. → Entrer un nom pour le workspace (par exemple wkspace)
+    5. → OK → OK
+    6. → Fermer la vue d’acceuil
+    7. → File → Import → General → Sélectionnez "Existing project into workspace"
+    8. → En face de "Select root directory " → Browse
+    9. → Sélectionner le dossier du workspace précédemment créé (wkspace)
+    10. → Cocher "Select archive file" → Browse → Sélectionnez l'archive translator.zip
+    11. → Finish
+</code></pre>
+
+## 2.2 Configurer le serveur Tomcat
+<br>
+Sous Eclipse :
+<pre><code>
+    1. → Window → Show view → Servers
+    2. →Dans l'onglet Servers cliquez sur le lien
+    3. →Sous le champ Select server type entrez Apache ; la liste des versions de
+    Tomcat s’affiche. Sélectionnez une version de Tomcat (j'ai utilisé la Tomcat v8.0)<br>    
+    4. → Server’s home host : localhost (ou l’IP ou le nom d’hôte hébergeant Tomcat)
+    5. →Next → Browse (pour la sélection du répertoire d'installation de Tomcat)
+    6. →Sélectionnez le JRE → Next
+    7. →Sélectionnez le module translator → Add pour déplacer le module translator de
+    l'espace "Available" vers l’espace "Configure"
+    8. →Finish
+</code></pre>
+
+# 3. Configuration de l'application
+<hr>
+## 3.1. Configuration des chemins d'accès aux fichiers
+
+Les 2 fichiers de configuration :
+
+<pre><code>
+    1. Sous le navigateur eclipse, éditer le fichier WebContent/WEB-INF/config/translation.properties
+    2. Dans la section # Files paths access modifiez la valeur associée à la clé translator.rootdir pour adapter le chemin absolu d’accès à votre environnement.
+    Le chemin doit se terminer par l’occurrence /translator<br>
+    3. Éditer le fichier web.xml
+        Dans la borne <location>...</location> incluse dans la borne <multipart-config>
+        modifier le chemin d’accès pour adapter l'application à votre environnement.
+</pre></code>
+
+<br>
+## 3.2 Configuration de la base de données (2 options)
+<br>
+L'application supporte deux moteurs de bases de données: `MySQL` et `SQLITE`<br>
+
+### 3.2.1 : Le plus simple : configuration de SQLITE
+<pre><code>
+    1. Le plus simple : SQLITE (configuration par défaut)
+    Si vous décidez de d’utiliser SQLITE, vous n’avez rien à configurer. Il n'est pas nécessaire d'installer de serveur de bases de données.<br>
+    Vérifiez que le fichier de la base de données se trouve bien dans .../WebContent/WEB-INF/db/subtitle_db.db<br>
+    2. Si toutefois, la configuration d'un serveur SQL s’avère nécessaire :
+        2.1. Éditez le fichier .../translator/WebContent/WEB-INF/config/translator.properties
+        2.2. Dans la section # JDBC configuration : si nécessaire, placez un caractère # devant
+jdbc.engine=MYSQL_ENGINE
+        2.3. Si nécessaire, enlevez le caractère devant #jdbc.engine=SQLITE_ENGINE
+</pre></code>
+<br>
+<pre>
+    **Un bon candidat pour explorer les données de la base de données SQLITE : le nagivateur "sqlitebrowser"**
+    </pre>
+
+### 3.2.2 : L'autre option : configuration de MySQL
+Il est nécessaire que le serveur de base de données MySQL soit installé. Il doit être configuré pour servir sur le port 3306. Si ce n'est pas le cas :
+<pre><code>
+    1. Sous Eclipse, éditez le fichier WebContent/WEB-INF/config/translator.properties
+    2. Configurez la clé jdbc.mysql.url avec le port du serveur MySQL.
+    3. Dans la section # JDBC configuration : si nécessaire, placez un caractère # devant
+    jdbc.engine=SQLITE_ENGINE
+    4. Si nécessaire, enlevez le caractère # devant #jdbc.engine=MYSQL_ENGINE
+    5. Dans la section # Database access : configurez le nom de l'utilisateur et son mot de
+    passe.
+    6. Dans le répertoire : .../translator/WebContent/WEB-INF/db chargez sur le serveur
+    MySQL , la base de données subtitle_db.sql
+    
+</code></pre>
+
+<br>
+## 3.3. Configuration des logs (optionnel)
+
+LOG4J a été implémenté pour la faciliter les opérationde de debug. Par défaut, cette option est désactivée.
+
+<br>
+Pour l’activer :
+<pre><code>
+    1. Éditer le fichier WebContent/WEB-INF/config/translation.properties
+    2. Dans la section # Logger level : configurez log4j.level=DEBUG
+</code></pre>
+
+# 4. utilisation
+<hr>
+## 4.1 Pour lancer l'application
+<br>
+Sous Eclipse, pour lancer l'application WEB :<br>
+<pre><code>
+    1. Activer RUN sur la servlet edu.subtitletranslator.servlets.TranslatorServlet
+    2. Après avoir lancé le serveur d'application et le serveur WEB :
+        http://<IP>:8080/translator (http://localhost:8080/translator) en supposant que le serveur WEB est configuré pour être en écoute sur le port 8080.
+</code></pre>
+<center><img src="./SelectionFichierATraduire.png" alt="Drawing" style="width: 200px;"/></center>
+
+## 4.2 Les fichiers à traduire
+<br>
+Les fichiers .srt sont logés dans le dossier :
+<pre><code>
+    1. WebContent/WEB-INF/file
+</code></pre>
+
+## 4.3 Traduire un fichier
+<br>
+Les lignes traduites sont enregistrées dans la base de données.<br>
+Le traducteur accède à ses travaux en rechargeant le fichier à traduire. Dans ce cas, les
+traductions en bases de données sont présentées au traducteur.
+<br>
+<br>
+Après avoir chargé le fichier à traduire, vous devriez voir ceci à l’écran :
+<pre><code>
+    1. Choisir un fichier → Envoyer
+    2. Entrez les traductions pour chacune des lignes
+</code></pre>
+<center><img src="./FichierATraduire.png" alt="Drawing" style="width: 200px;"/></center>
+
+<pre><code>
+    3. En entrant Enregistrer, la ligne traduite est enregistrée dans la base de données.
+</code></pre>
+<br>
+
+<center><img src="./TraduireLeFichier.png" alt="Drawing" style="width: 200px;"/></center>
+
+En Entrant 
+<pre><code>
+    4. Effacer
+</code></pre>
+la ligne traduite est effacée de la base de données. Cette fonction apparaît dès qu’une ligne de traduction est traitée.
+
+## 4.4 Purger une traduction
+
+Pour réaliser cette fonction : 
+<pre><code>
+    1. Reset
+</code></pre>
+
+## 4.5 Ecrire le fichier traduit
+
+Pour réaliser cette fonction : 
+<pre><code>
+    1. Ecrire
+</code></pre>
+Le fichier traduit est sauvegardé dans le répertoire WebContent/WEB-INF/file
+
+<center><img src="./Enregistrer.png" alt="Drawing" style="width: 200px;"/></center>
+
+<br>
+Les informations de la traduction liées au fichier chargé sont purgées de la base de
+données.
+<br>
+
+Le nom du fichier traduit est préfixé par l’occurrence <code>trans-</code>
+Si le fichier à traduire est fichier_a_traduire.srt,
+le fichier traduit sera <code>trans-fichier_a_traduire.srt</code>
+
