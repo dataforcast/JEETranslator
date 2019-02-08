@@ -1,0 +1,15 @@
+1
+00:00:00,535 --> 00:00:02,462
+Je suis professeur.e d'informatique et
+d'ingéniérie informatique
+
+2
+00:00:02,462 --> 00:00:04,389
+à Carnegie Mellon,
+
+3
+00:00:04,389 --> 00:00:06,318
+et mes recherches se concentrent sur
+l'utilisabilité de la vie privée
+
+
